@@ -24,8 +24,16 @@ function HomePage() {
     return (
         <div className="home-page">
             <h1>Welcome to Meet Helper!</h1>
+            <h2>How it works?</h2>
+            <div className="description">
+                <p>If you want to open a clean calendar, you start a new session
+                    and click and drag on the days that you are available. <br></br>
+                    Then copy the session code and send it to your friends so they can share when they are available too! <br></br>
+                    Wherever the calendar is green it means all participants are free. Wherever it isn't - they aren't.
+                </p>
+            </div>
             <div className="button-container" >
-                <button  onClick={handleCreate}>
+                <button onClick={handleCreate}>
                     Create New Session
                 </button>
                 <button onClick={handleJoin}>

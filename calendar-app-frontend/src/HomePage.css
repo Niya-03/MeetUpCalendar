@@ -16,8 +16,23 @@ body, html {
   text-align: center;
 }
 
+p{
+  font-size: large;
+  font-weight: bold;
+}
+
+h2{
+  margin-block-start: 10px;
+  margin-block-end: 10px;
+}
+
+.description{
+  margin-left: 15px;
+  margin-right: 15px;
+}
+
 h1 {
-  margin-bottom: 3rem;
+  margin-bottom: 1.5rem;
   font-size: 2.5rem;
   color: black;
   text-shadow: 1px 1px 2px rgba(0,0,0,0.2);

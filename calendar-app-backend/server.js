@@ -27,12 +27,12 @@ function calculateAvailability(events) {
   const startDate = new Date(start) + 1;
   const endDate = new Date(end);
 
-  // Clone and zero out the time
+  
   let current = new Date(startDate);
   current.setHours(0, 0, 0, 0);
 
   const endDay = new Date(endDate);
-  endDay.setHours(0, 0, 0, 0); // ensure only date comparison
+  endDay.setHours(0, 0, 0, 0); 
 
   while (current < endDay) {
     current.setDate(current.getDate() + 1);
