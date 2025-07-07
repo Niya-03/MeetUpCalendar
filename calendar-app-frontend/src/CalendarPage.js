@@ -16,7 +16,7 @@ function CalendarPage() {
     useEffect(() => {
         async function fetchBackgrounds() {
             try {
-                const response = await fetch(`https://meetupcalendar.onrender.com/sessions/${sessionId}/availability`);
+                const response = await fetch(`http://localhost:5000/api/sessions/${sessionId}/availability`);
                 const data = await response.json();
                 console.log(data);
 
@@ -38,7 +38,7 @@ function CalendarPage() {
             setUserName(name);
         }
 
-        fetch(`https://meetupcalendar.onrender.com/sessions/${sessionId}/events`)
+        fetch(`http://localhost:5000/api/sessions/${sessionId}/events`)
             .then(res => res.json())
             .then(data => setEvents(data))
             .catch(err => console.error('Error loading events:', err));
@@ -62,14 +62,20 @@ function CalendarPage() {
         setEvents(prev => Array.isArray(prev) ? [...prev, newEvent] : [newEvent]);
 
 
-        fetch(`https://meetupcalendar.onrender.com/sessions/${sessionId}/events`, {
+        fetch(`http://localhost:5000/api/sessions/${sessionId}/events`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(newEvent),
-        }).catch(err => {
-            console.error('Failed to save event', err);
+        }).then(() => {
+            return fetch(`http://localhost:5000/api/sessions/${sessionId}/availability`);
+        })
+            .then(res => res.json())
+            .then(data => {
+                setBackgroundEvents(data); // ✅ update background events
+            }).catch(err => {
+                console.error('Failed to save event', err);
 
-        });
+            });
     };
 
     const handleDateClick = (selectInfo) => {
