@@ -17,7 +17,7 @@ const Session = require('./models/Session');
 
 app.post('/api/sessions/:sessionId/events', async (req, res) => {
   const { sessionId } = req.params;
-  const { userName, start, end, allDay } = req.body;
+  const { userName, title, start, end, allDay } = req.body;
 
   try {
     let session = await Session.findOne({ sessionId });
@@ -26,7 +26,7 @@ app.post('/api/sessions/:sessionId/events', async (req, res) => {
       session = new Session({ sessionId, events: [] });
     }
 
-    session.events.push({ userName, start, end, allDay });
+    session.events.push({ userName, title, start, end, allDay });
     await session.save();
 
     res.status(201).json(session);

@@ -49,9 +49,10 @@ function CalendarPage() {
             allDay: selectInfo.allDay,
         };
 
-
-        setEvents(prev => [...prev, newEvent]);
-
+        
+            setEvents(prev => Array.isArray(prev) ? [...prev, newEvent] : [newEvent]);
+        
+        
         fetch(`http://localhost:5000/api/sessions/${sessionId}/events`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
