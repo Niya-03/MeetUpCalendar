@@ -11,29 +11,38 @@ function CalendarPage() {
     const { sessionId } = useParams();
     const [events, setEvents] = useState([]);
     const [userName, setUserName] = useState("");
+    const [backgroundEvents, setBackgroundEvents] = useState([]);
 
-    // useEffect(() => {
-    //     const name = prompt("Please enter your name:");
-    //     if (name) {
-    //         setUserName(name);
-    //     }
-    // }, []);
+    useEffect(() => {
+        async function fetchBackgrounds() {
+            try {
+                const response = await fetch(`http://localhost:5000/api/sessions/${sessionId}/availability`);
+                const data = await response.json();
+                console.log(data);
 
-    
+                setBackgroundEvents(data);
+            } catch (error) {
+                console.error("Failed to load availability data:", error);
+            }
+        }
 
-  useEffect(() => {
-    
-    
-    const name = prompt("Please enter your name:");
+        if (sessionId) {
+            fetchBackgrounds();
+        }
+    }, [sessionId]);
+
+
+    useEffect(() => {
+        const name = prompt("Please enter your name:");
         if (name) {
             setUserName(name);
         }
 
-    fetch(`http://localhost:5000/api/sessions/${sessionId}/events`)
-      .then(res => res.json())
-      .then(data => setEvents(data))
-      .catch(err => console.error('Error loading events:', err));
-  }, [sessionId]);
+        fetch(`http://localhost:5000/api/sessions/${sessionId}/events`)
+            .then(res => res.json())
+            .then(data => setEvents(data))
+            .catch(err => console.error('Error loading events:', err));
+    }, [sessionId]);
 
     const handleSelect = (selectInfo) => {
         let title = userName;
@@ -49,10 +58,10 @@ function CalendarPage() {
             allDay: selectInfo.allDay,
         };
 
-        
-            setEvents(prev => Array.isArray(prev) ? [...prev, newEvent] : [newEvent]);
-        
-        
+
+        setEvents(prev => Array.isArray(prev) ? [...prev, newEvent] : [newEvent]);
+
+
         fetch(`http://localhost:5000/api/sessions/${sessionId}/events`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -91,6 +100,26 @@ function CalendarPage() {
         ]);
     };
 
+    console.log("events:", events);
+    console.log("backgroundEvents:", backgroundEvents);
+
+    let allEvents = [];
+
+    if (events.length > 0) {
+        for (const element of events) {
+            allEvents.push(element);
+        }
+    }
+
+
+    if (backgroundEvents.length > 0) {
+        for (const element of backgroundEvents) {
+            allEvents.push(element);
+        }
+    }
+
+
+    console.log(allEvents)
 
     return (
         <div className="calendar-page">
@@ -104,7 +133,7 @@ function CalendarPage() {
                             selectable={true}
                             select={handleSelect}
                             dateClick={handleDateClick}
-                            events={events}
+                            events={allEvents}
                             allDaySlot={false}
                             height={600}
                             firstDay={1}
