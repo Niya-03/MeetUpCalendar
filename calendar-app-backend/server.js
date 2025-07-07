@@ -16,37 +16,35 @@ mongoose.connect(process.env.MONGO_URI)
 const Session = require('./models/Session');
 
 function calculateAvailability(events) {
-  // Get all unique users involved
   const uniqueUsers = [...new Set(events.map(e => e.userName))];
   const totalUsers = uniqueUsers.length;
 
-  // Map of date string => Set of available users
   const dayMap = {};
 
   events.forEach(event => {
-    const { userName, start, end } = event;
-    const startDate = new Date(start);
-    const endDate = new Date(end);
+  const { userName, start, end } = event;
 
-    // Start from 00:00 of the start date
-    let current = new Date(startDate);
-    current.setHours(0, 0, 0, 0);
+  const startDate = new Date(start) + 1;
+  const endDate = new Date(end);
 
-    // Loop through all days the event spans
-    while (current <= endDate) {
-      const dateStr = current.toISOString().split("T")[0]; // 'YYYY-MM-DD'
+  // Clone and zero out the time
+  let current = new Date(startDate);
+  current.setHours(0, 0, 0, 0);
 
-      if (!dayMap[dateStr]) dayMap[dateStr] = new Set();
-      dayMap[dateStr].add(userName);
+  const endDay = new Date(endDate);
+  endDay.setHours(0, 0, 0, 0); // ensure only date comparison
 
-      // Go to next day
-      current.setDate(current.getDate() + 1);
-    }
-  });
+  while (current < endDay) {
+    current.setDate(current.getDate() + 1);
+    const dateStr = current.toISOString().split("T")[0];
+    if (!dayMap[dateStr]) dayMap[dateStr] = new Set();
+    dayMap[dateStr].add(userName);
+    
+  }
+});
 
   const result = [];
 
-  // Build background events based on daily user availability
   for (const [dateStr, usersAvailable] of Object.entries(dayMap)) {
     const percent = (usersAvailable.size / totalUsers) * 100;
 
